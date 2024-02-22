@@ -74,11 +74,22 @@ Vscode, ssh server(RTX 3090/Ubuntu 20.04.6), pytorch
 여러가지 CAFormer 모델을 실험해보았고 loss 값이 좋았던 caformer_s18_384을 최종 모델로 선택했습니다.
 
 ### Modeling Process
-
+<img src="image/Model Process.jpg/" alt="model compare" width="620" >
 
 ## Ensemble & TTA
-https://github.com/qubvel/ttach?tab=readme-ov-file
-https://github.com/qubvel/ttach/blob/master/ttach/wrappers.py #L52
+### None TTA confusion matrix of valid set
+<img src="image/None TTA.png" alt="model compare" width="1024">
+
+**Valid Accuracy: 0.94985**<br>
+**Valid F1: 0.94912**
+
+----------------------
+
+### 20 Times TTA confusion matrix of valid set
+<img src="image/TTA Hard.png" alt="model compare" width="1024">
+
+**Valid Accuracy: 0.96902**<br>
+**Valid F1: 0.96865**
 
 ## 5. Result
 
