@@ -222,7 +222,7 @@ ppt 폴더참조
 
 ### Reference
 Focal Loss: https://github.com/mathiaszinnen/focal_loss_torch  
-CAFormer: https://github.com/sail-sg/metaformer
+CAFormer: https://github.com/sail-sg/metaformer  
 RotNet: https://github.com/d4nst/RotNet  
 
 대회 데이터 참고용 링크: https://www.content.upstage.ai/ocr-pack/insurance
