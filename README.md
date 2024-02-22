@@ -59,7 +59,109 @@ Vscode, ssh server(RTX 3090/Ubuntu 20.04.6), pytorch
 ![스크린샷 2024-02-21 151743](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/42354230/1a27b195-36bb-4402-acd1-8a7aa145f0b5)
 
 ### Augmentation
-![스크린샷 2024-02-21 151956](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/42354230/9ccc0776-d786-4a31-aabc-09f0ff8e50a7)
+#### Augraphy
+<pre>
+ink_phase = [
+    InkBleed(intensity_range=(0.3, 0.6),
+             kernel_size=random.choice([(5, 5), (3, 3)]),
+             severity=(0.2, 0.6),
+             p=0.5,),
+    
+    Hollow(hollow_median_kernel_value_range = (3, 10),
+                hollow_min_width_range=(1, 3),
+                hollow_max_width_range=(10, 15),
+                hollow_min_height_range=(1, 3),
+                hollow_max_height_range=(10, 15),
+                hollow_min_area_range=(1, 3),
+                hollow_max_area_range=(20, 50),
+                hollow_dilation_kernel_size_range = (1, 2),
+                p=1.0)
+]
+
+paper_phase = [
+    OneOf([
+        NoiseTexturize(sigma_range=(5, 20),
+                        turbulence_range=(3, 10),
+                        texture_width_range=(50, 500),
+                        texture_height_range=(50, 500),
+                        p=0.7),
+        
+        VoronoiTessellation(mult_range = (50, 80),
+                            #seed = 19829813472,
+                            num_cells_range = (500,1000),
+                            noise_type = "random",
+                            background_value = (170, 225),),
+    ], p=1.0),
+    
+    BrightnessTexturize(texturize_range=(0.9, 0.99),
+                        deviation=0.03,
+                        p=0.4),
+]
+
+post_phase = [
+    ShadowCast(shadow_side = "bottom",
+                shadow_vertices_range = (2, 3),
+                shadow_width_range=(0.5, 0.8),
+                shadow_height_range=(0.5, 0.8),
+                shadow_color = (0, 0, 0),
+                shadow_opacity_range=(0.5,0.6),
+                shadow_iterations_range = (1,2),
+                shadow_blur_kernel_range = (101, 301),
+                p=0.2),
+]
+
+pipeline = AugraphyPipeline(ink_phase=ink_phase, paper_phase=paper_phase, post_phase=post_phase)
+</pre>
+
+![스크린샷 2024-02-22 140000](https://github.com/dudcjs2779/kr-document-type-classification-upstage-competition/assets/42354230/e210c36b-29ec-4611-abb7-f0230eea6e6e)
+
+------
+#### Albumentation
+<pre>
+trn_transform = A.Compose([
+    A.OneOf([
+        # 비율을 유지하며 이미지 전체를 학습하기 위함
+        A.Compose([
+            A.LongestMaxSize(max_size=img_size, interpolation=cv2.INTER_CUBIC), # 가장 긴변을 img_size에 맞춤
+            A.PadIfNeeded(min_height=img_size, min_width=img_size, border_mode=cv2.BORDER_CONSTANT, value=[255, 255, 255]), # 패딩
+            A.OneOf([ # 회전 및 스케일링
+                A.Rotate(limit=360, p=0.5, border_mode=cv2.BORDER_CONSTANT, value=[255, 255, 255]),
+                A.RandomRotate90(p=0.2),
+                A.ShiftScaleRotate(shift_limit=0.2, scale_limit=0.2, rotate_limit=360, p=0.3, border_mode=cv2.BORDER_CONSTANT, value=[255, 255, 255]),
+            ], p=0.8),
+            A.CoarseDropout (max_holes=6, max_height=96, max_width=96, min_holes=2, min_height=24, min_width=24, fill_value=0, p=0.2), # cutout
+        ], p=0.6),
+        
+        # 문서의 제목을 학습하기 위함
+        A.Compose([
+            A.LongestMaxSize(max_size=640, interpolation=cv2.INTER_CUBIC),
+            A.PadIfNeeded(min_height=640, min_width=640, border_mode=cv2.BORDER_CONSTANT, value=[255, 255, 255]),
+            
+            # Shift를 줘서 다양한 형태의 제목 이미지를 학습하기를 의도
+            A.ShiftScaleRotate(shift_limit_x=0.2, shift_limit_y=(0.0, 0.1), scale_limit=0.2, rotate_limit=0, p=0.7, border_mode=cv2.BORDER_CONSTANT, value=[255, 255, 255]),
+            A.Crop (x_min=128, y_min=0, x_max=128+384, y_max=384, p=1.0), # 윗쪽 중앙 크롭(대부분의 문서의 제목이 있는 위치)
+            A.OneOf([
+                A.Rotate(limit=360, p=0.7, border_mode=cv2.BORDER_CONSTANT, value=[255, 255, 255]),
+                A.RandomRotate90(p=0.3),
+            ], p=0.8),
+        ], p=0.4)
+    ], p=1.0),
+    
+    A.OneOf([
+        A.RGBShift(r_shift_limit=10, g_shift_limit=10, b_shift_limit=10, p=0.6),
+        A.ChannelShuffle(p=0.4),
+    ], p=0.2),
+    
+    A.OneOf([A.MotionBlur(p=0.3), A.MedianBlur(blur_limit=3, p=0.3), A.Blur(blur_limit=3, p=0.4),], p=0.2), # 블러
+    A.GaussNoise(var_limit=(30.0, 250.0), mean=0, per_channel=True, p=0.2), # 노이즈
+    A.RandomBrightnessContrast (brightness_limit=(-0.3, 0.3), contrast_limit=(-0.3, 0.3), brightness_by_max=True, p=0.2), # 밝기
+    A.OneOf([A.OpticalDistortion(p=0.5), A.PiecewiseAffine(scale=(0.01, 0.03), p=0.5)], p=1.0), # 구겨진 느낌
+    A.HorizontalFlip(p=0.5),
+    A.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], max_pixel_value=255),
+    ToTensorV2(),
+])
+    
+</pre>
 
 
 ## 4. Modeling
