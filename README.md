@@ -71,6 +71,7 @@ Vscode, ssh server(RTX 3090/Ubuntu 20.04.6), pytorch
 최근에는 Vision Task에서도 **Transforemr 아키텍쳐 기반의 Vision 모델**들이 많이 등장하면서 기존의 Conv 기반의 모델보다 훨씬 좋은 성능을 내고 있고 그에 따라 Vision 모델들도 LLM과 같이 사이즈를 키우는 움직임을 보이며 성능도 비례해서 올라가고 있어 ImageNet Task에서의 상위권을 사이즈가 큰 모델들이 차지하고 있습니다. 하지만 이번 대회에서 제공받은 **GPU의 한계와 2주라는 짧은 시간**으로 인해 사이즈가 큰 모델을 사용하기 힘들다고 판단했고 **MetaFormer 아키텍쳐를 활용한 해당 모델**이 다른 Transformer 기반의 모델에 비해서 **성능도 1~2% 높으며 사이즈도 훨씬 작고 빠르게** 동작한다는 것을 발견했고 해당 모델을 선택하게 되었습니다.
 
 <img src="image/CAFormer Models compare.png/" alt="model compare" width="460" height="400">
+여러가지 CAFormer 모델을 실험해보았고 loss 값이 좋았던 caformer_s18_384을 최종 모델로 선택했습니다.
 
 ### Modeling Process
 
