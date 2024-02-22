@@ -8,21 +8,23 @@
 |                            팀장                            |                            팀원                             |                            팀원                             |                            팀원                             |                            팀원                             |                            팀원                             |
 
 ## 1. Competitions Info
-$\color{red}{\textsf{해당 대회의 Train/Test 데이터는 저작권 문제로 공개가 불가능해 비슷한 이미지로 대체되어있음을 알려드립니다!}}$
+$\color{red}{\textsf{해당 대회의 Train/Test 데이터는 저작권 문제로 공개가 불가능해 비슷한 이미지로 대체되어있음을 알려드립니다.}}$<br>
+대회에서 실제 활용된 Train/Test에 가까운 데이터는 https://www.content.upstage.ai/ocr-pack/insurance 링크에서 확인해보실 수 있습니다.
 
 ### Overview
 ![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/4e685524-05b9-4f48-b980-d24460bb43cb)
+해당 대회는 **다양한 문서를 분류하는 것이 주된 목적**이지만 **자동차 계기판, 자동차 번호판** 같은 문서가 아닌 데이터, 그리고 **주민등록증, 여권**과 같은 일반적인 문서와는 조금 이질적인 데이터까지 포함돼 있는 특징이 있습니다. 또한 Train 데이터는 비교적 깨끗한 이미지가 주어지고 **Test 데이터에는 실데이터를 반영해** 다양한 노이즈가 포함된 이미지가 주어졌으며 이에 대응 가능한 모델을 학습시키는 것이 핵심인 대회입니다.
 
 ### Environment
-Vscode, RTX 3090 server
+Vscode, ssh server(RTX 3090/Ubuntu 20.04.6), pytorch
 
-### Timeline
-
+### Timeline(2 weeks)
 - February 05, 2024 - Start Date
 - February 19, 2024 - Final submission deadline
 
 ### Evaluation
 ![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/1c2bc659-2d35-4678-9a54-6a6671e002c8)
+
 
 ## 2. Components
 
