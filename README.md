@@ -8,12 +8,12 @@
 |                            팀장                            |                            팀원                             |                            팀원                             |                            팀원                             |                            팀원                             |                            팀원                             |
 
 ## 1. Competitions Info
-$\color{red}{\textsf{해당 대회의 Train/Test 데이터는 저작권 문제로 공개가 불가능해 비슷한 이미지로 대체되어있음을 알려드립니다.}}$<br>
+$\color{red}{\textsf{해당 대회의 Train/Test 데이터는 저작권 문제로 공개가 불가능해 설명을 위해 비슷한 이미지로 대체되어있음을 알려드립니다.}}$<br>
 대회에서 실제 활용된 Train/Test에 가까운 데이터는 https://www.content.upstage.ai/ocr-pack/insurance 링크에서 확인해보실 수 있습니다.
 
 ### Overview
 ![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/4e685524-05b9-4f48-b980-d24460bb43cb)
-해당 대회는 **다양한 문서를 분류하는 것이 주된 목적**이지만 **자동차 계기판, 자동차 번호판** 같은 문서가 아닌 데이터, 그리고 **주민등록증, 여권**과 같은 일반적인 문서와는 조금 이질적인 데이터까지 포함돼 있는 특징이 있습니다. 또한 Train 데이터는 비교적 깨끗한 이미지가 주어지고 **Test 데이터에는 실데이터를 반영해** 다양한 노이즈가 포함된 이미지가 주어졌으며 이에 대응 가능한 모델을 학습시키는 것이 핵심인 대회입니다.
+해당 대회는 **Upstage AI Lab** 과정에서 비공개로 진행된 내부 대회이며 **다양한 문서를 분류하는 것이 주된 목적**입니다. 하지만 **자동차 계기판, 자동차 번호판** 같은 문서가 아닌 데이터, 그리고 **주민등록증, 여권**과 같은 일반적인 문서와는 조금 이질적인 데이터까지 포함돼 있는 특징이 있습니다. 또한 Train 데이터는 비교적 깨끗한 이미지가 주어지고 **Test 데이터에는 실데이터를 반영해** 다양한 노이즈가 포함된 이미지가 주어졌으며 이에 대응 가능한 모델을 학습시키는 것이 핵심인 대회입니다.
 
 ### Environment
 Vscode, ssh server(RTX 3090/Ubuntu 20.04.6), pytorch
@@ -24,7 +24,7 @@ Vscode, ssh server(RTX 3090/Ubuntu 20.04.6), pytorch
 
 ### Evaluation
 ![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/1c2bc659-2d35-4678-9a54-6a6671e002c8)
-
+평가지표는 macro f1 스코어로 **클래스 불균형**에도 신뢰성있는 점수를 제공하는 평가지표입니다.
 
 ## 2. Components
 
@@ -65,202 +65,15 @@ Vscode, ssh server(RTX 3090/Ubuntu 20.04.6), pytorch
 ## 4. Modeling
 
 ### Model descrition
-metaformer: https://github.com/sail-sg/metaformer?tab=readme-ov-file
+![197601575-6a19ed8c-7bc2-433b-895b-e5363358ea77](https://github.com/dudcjs2779/kr-document-type-classification-upstage-competition/assets/42354230/82ff7195-2714-4839-83bc-60f3ffed4b29)
+Used Model: caformer_s18_384([github](https://github.com/sail-sg/metaformer))
 
+최근에는 Vision Task에서도 Transforemr 아키텍쳐 기반의 Vision 모델들이 많이 등장하면서 기존의 Conv 기반의 모델보다 훨씬 좋은 성능을 내고 있고 그에 따라 Vision 모델들도 LLM과 같이 사이즈를 키우는 움직임을 보이며 성능도 비례해서 올라가고 있어 ImageNet Task에서의 상위권을 사이즈가 큰 모델들이 차지하고 있습니다. 하지만 이번 대회에서 제공받은 GPU의 한계와 2주라는 짧은 시간으로 인해 사이즈가 큰 모델을 사용하기 힘들다고 판단했고 MetaFormer 아키텍쳐를 활용한 해당 모델이 다른 Transformer 기반의 모델에 비해서 성능도 1~2% 높으며 사이즈도 훨씬 작고 빠르게 동작한다는 것을 발견했고 해당 모델을 선택하게 되었습니다.
+
+![W B Chart 2024  2  22  오전 11_45_17](https://github.com/dudcjs2779/kr-document-type-classification-upstage-competition/assets/42354230/98262645-afb6-4de6-a3e4-f8eae4a2f126)
 
 ### Modeling Process
-![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/a3c67807-fca2-46c3-b6b0-f763b9a1807f)  
-.  
-.  
-.  
-.  
-![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/c0d76c59-c669-4204-ae00-c859f9f2dbd3)  
-```python
-# training 코드, evaluation 코드, training_loop 코드
-def training(model, dataloader, optimizer, loss_fn, scheduler, device, epoch, num_epochs):
-    model.train()  # 모델을 학습 모드로 설정
-    train_loss = 0.0
-    preds_list = []
-    targets_list = []
-    
-    m = torch.nn.Softmax(dim=-1)
 
-    tbar = tqdm(dataloader)
-    for idx, (image, targets) in enumerate(tbar):
-        image = image.to(device)
-        targets = targets.to(device)
-        
-        # 순전파
-        model.zero_grad(set_to_none=True)
-        if (idx + 1) % 10 == 0:
-            image, mix_targets = mixup_fn(image, targets)
-            preds = model(image)
-            loss = mixup_loss_fn(preds, mix_targets)
-        else:
-            preds = model(image)
-            # loss = loss_fn(preds, targets)
-            loss = loss_fn(m(preds), targets)
-
-        # 역전파 및 가중치 업데이트
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        scheduler.step()
-
-        # 손실과 정확도 계산
-        train_loss += loss.item()
-        preds_list.extend(preds.argmax(dim=1).detach().cpu().numpy())
-        targets_list.extend(targets.detach().cpu().numpy())
-        tbar.set_description(f"Epoch [{epoch+1}/{num_epochs}], Train Loss: {loss.item():.4f}")
-
-    # 에폭별 학습 결과 출력
-    train_loss = train_loss / len(dataloader)
-    train_acc = accuracy_score(targets_list, preds_list)
-    train_f1 = f1_score(targets_list, preds_list, average='macro')
-    
-    ret = {
-        "train_loss": train_loss,
-        "train_acc": train_acc,
-        "train_f1": train_f1,
-    }
-
-    return model, ret
-
-def evaluation(model, dataloader, loss_fn, device, epoch, num_epochs):
-    model.eval()  # 모델을 평가 모드로 설정
-    valid_loss = 0.0
-    preds_list = []
-    targets_list = []
-    m = torch.nn.Softmax(dim=-1)
-
-    with torch.no_grad(): # model의 업데이트 막기
-        tbar = tqdm(dataloader)
-        for idx, (image, targets) in enumerate(tbar):
-            image = image.to(device)
-            targets = targets.to(device)
-
-            # 순전파
-            model.zero_grad(set_to_none=True)
-            if (idx + 1) % 8 == 0:
-                image, mix_targets = mixup_fn(image, targets)
-                preds = model(image)
-                loss = mixup_loss_fn(preds, mix_targets)
-            else:
-                preds = model(image)
-                loss = loss_fn(m(preds), targets)
-
-            # 손실과 정확도 계산
-            valid_loss += loss.item()
-            preds_list.extend(preds.argmax(dim=1).detach().cpu().numpy())
-            targets_list.extend(targets.detach().cpu().numpy())
-            tbar.set_description(f"Epoch [{epoch+1}/{num_epochs}], Valid Loss: {loss.item():.4f}")
-            
-    # 에폭별 학습 결과 출력
-    valid_loss = valid_loss / len(dataloader)
-    valid_acc = accuracy_score(targets_list, preds_list)
-    valid_f1 = f1_score(targets_list, preds_list, average='macro')
-    
-    ret = {
-        "valid_loss": valid_loss,
-        "valid_acc": valid_acc,
-        "valid_f1": valid_f1,
-    }
-
-    return model, ret
-
-
-def training_loop(model, train_dataloader, valid_dataloader, trn_dataset, val_dataset, train_dataset_list, val_dataset_list, loss_fn, optimizer, scheduler, device, num_epochs, patience, filename, project_name):
-    best_valid_loss = float('inf')  # 가장 좋은 validation loss를 저장
-    early_stop_counter = 0  # 카운터
-    valid_max_acc = -1
-    valid_max_f1 = -1
-    
-    notes = f"Optimizer: {optimizer.__class__.__name__}, focal_gamma: {loss_fn.gamma}, Image_Size: {img_size},"
-    run = wandb.init(project = project_name, tags=[optimizer.__class__.__name__], notes=notes)
-    
-    for epoch in range(num_epochs):
-        
-        data_idx = epoch % 200
-        T_dataset = ConcatDataset([trn_dataset, train_dataset_list[data_idx]])
-        V_dataset = ConcatDataset([val_dataset, val_dataset_list[data_idx]])
-        
-        train_dataloader = DataLoader(T_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=num_workers, pin_memory=True, drop_last=False)
-        valid_dataloader = DataLoader(V_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=num_workers, pin_memory=True, drop_last=False)
-        print(f"dataset{data_idx}")
-        
-        model, train_ret = training(model, train_dataloader, optimizer, loss_fn, scheduler, device, epoch, num_epochs)
-        model, valid_ret = evaluation(model, valid_dataloader, loss_fn, device, epoch, num_epochs)
-        
-        monitoring_value = {'train_loss': train_ret['train_loss'], 'train_accuracy': train_ret['train_acc'], 'train_f1': train_ret['train_f1'], 
-                            'valid_loss': valid_ret['valid_loss'], 'valid_accuracy': valid_ret['valid_acc'], 'valid_f1': valid_ret['valid_f1'], 
-                            'best_valid_loss': best_valid_loss, 'valid_max_acc': valid_max_acc, 'valid_max_f1': valid_max_f1,
-                            'init_lr': optimizer.param_groups[0]['initial_lr'], 'lr': optimizer.param_groups[0]['lr'],
-                            'weight decay': optimizer.param_groups[0]['weight_decay'],}
-        
-        run.log(monitoring_value, step=epoch)
-        
-        if valid_ret['valid_acc'] > valid_max_acc:
-            valid_max_acc = valid_ret['valid_acc']
-            
-        if valid_ret['valid_f1'] > valid_max_f1:
-            name, ext = os.path.splitext(filename)
-            torch.save(model.state_dict(), model_path+name+'_f1'+ext)
-            valid_max_f1 = valid_ret['valid_f1']
-        
-        # validation loss가 감소하면 모델 저장 및 카운터 리셋
-        if valid_ret['valid_loss'] < best_valid_loss:
-            best_valid_loss = valid_ret['valid_loss']
-            # model.save_pretrained(model_path)
-            name, ext = os.path.splitext(filename)
-            torch.save(model.state_dict(), model_path+name+'_loss'+ext)
-            early_stop_counter = 0
-            
-        # validation loss가 증가하거나 같으면 카운터 증가
-        else:
-            early_stop_counter += 1
-
-        print(f"Epoch [{epoch + 1}/{num_epochs}], T_Train Loss: {train_ret['train_loss']:.4f}, Train Accuracy: {train_ret['train_acc']:.4f}, Train F1: {train_ret['train_f1']:.4f}")
-        print(f"Epoch [{epoch + 1}/{num_epochs}], T_Valid Loss: {valid_ret['valid_loss']:.4f}, Valid Accuracy: {valid_ret['valid_acc']:.4f}, Valid F1: {valid_ret['valid_f1']:.4f}")
-
-        # 조기 종료 카운터가 설정한 patience를 초과하면 학습 종료
-        if early_stop_counter >= patience:
-            print("Early stopping")
-            break
-            
-    run.finish()
-    return model, valid_max_acc, valid_max_f1
-```
-```python
-# 모델 전체 fine tuning
-model.to(device)
-num_epochs = EPOCHS
-lr = LR
-patience = 25
-filename = 'caformer_s18_sail_in22k_ft_in1k_384.pth'
-project_name = "kyc-DC-caformer_s18_386"
-
-# optimizer = optim.RMSprop(model.parameters(), lr=lr, alpha=0.99)
-# optimizer = optim.Adam(model.parameters(), lr=lr)
-optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=0.05)
-# optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9)
-
-num_epoch_steps = len(trn_loader) * 2
-# scheduler = optim.lr_scheduler.CyclicLR(optimizer, base_lr=lr/1000, max_lr=lr, step_size_up=10, step_size_down=50, mode='exp_range', gamma=0.995)
-# scheduler = CosineAnnealingWarmUpRestarts(optimizer, T_0=num_epoch_steps*80, T_mult=2, eta_max=lr,  T_up=num_epoch_steps*1, gamma=0.5)
-
-# scheduler = optim.lr_scheduler.CyclicLR(optimizer, base_lr=1e-6, max_lr=LR, step_size_up=4, step_size_down=10, mode='triangular')
-scheduler = get_scheduler(
-    name='cosine', optimizer=optimizer, 
-    num_warmup_steps=0, 
-    num_training_steps= num_epoch_steps * num_epochs
-)
-
-model, valid_max_acc, valid_max_f1 = training_loop(model, trn_loader, val_loader, trn_dataset, val_dataset, aug_trn_dataset_list, aug_val_dataset_list, loss_fn, optimizer, scheduler, device, num_epochs, patience, filename, project_name)
-print(f'Valid max accuracy : {valid_max_acc:5f}, Valid max f1 : {valid_max_f1:5f}')
-```
-![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/3953836d-4b55-47bb-b25f-8d5a14f523b1)
-![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/04220b2b-eca5-4ac0-9f5b-18a82f9d3441)
-![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/e45f2a46-7144-412e-a7ac-9aed3a534dac)
 
 ## Ensemble & TTA
 https://github.com/qubvel/ttach?tab=readme-ov-file
