@@ -23,7 +23,7 @@ Vscode, ssh server(RTX 3090/Ubuntu 20.04.6), pytorch
 - February 19, 2024 - Final submission deadline
 
 ### 1-4 Evaluation
-![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/1c2bc659-2d35-4678-9a54-6a6671e002c8)
+![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/1c2bc659-2d35-4678-9a54-6a6671e002c8)  
 평가지표는 macro f1 스코어로 **클래스 불균형**에도 신뢰성있는 점수를 제공하는 평가지표입니다.
 
 ## 2. Components
