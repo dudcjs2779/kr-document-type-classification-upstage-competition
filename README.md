@@ -196,20 +196,23 @@ trn_transform = A.Compose([
 ## 5. Result
 
 ### Leader Board
-![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/5e233a57-3e37-4141-885c-220fd5273e59)  
-최종 리더보드  
-![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/4df686f9-9b6d-484c-9c6c-c3c115f3dbfa)
+#### Public Score
+<img src="image/Rank_public.png" alt="model compare" width="1024">
 
+F1: 0.9610
+
+------
+#### Private Score
+<img src="image/Rank_private.png" alt="model compare" width="1024">
+
+F1: 0.9594
 
 ### Presentation
 ppt 폴더참조
 
 ### Reference
-https://paperswithcode.com/  
-https://github.com/qubvel/ttach?tab=readme-ov-file  
-https://github.com/sail-sg/metaformer  
 Focal Loss: https://github.com/mathiaszinnen/focal_loss_torch  
-CAFormer: https://arxiv.org/abs/2210.13452  
+CAFormer: https://github.com/sail-sg/metaformer
 RotNet: https://github.com/d4nst/RotNet  
 
 대회 데이터 참고용 링크: https://www.content.upstage.ai/ocr-pack/insurance
