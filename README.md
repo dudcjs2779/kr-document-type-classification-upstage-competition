@@ -31,11 +31,15 @@ Vscode, ssh server(RTX 3090/Ubuntu 20.04.6), pytorch
 ### 2-1 Directory
 
 ```
-├── code
-    ├── EDA
-    ├── Augmentation
-    ├── Modelling
-    └── Ensemble
+├─code
+│    baseline_code_final.ipynb
+│    rotnet_pytorch.ipynb
+├─image
+├─model
+│    caformer_s18_sail_in22k_ft_in1k_384_loss_titlecrop02.pth
+│    caformer_s18_sail_in22k_ft_in1k_384_rot.pth
+└─ppt
+     CV 05조 발표.pptx
 ```
 
 ## 3. Data descrption
