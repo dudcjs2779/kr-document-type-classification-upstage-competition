@@ -11,24 +11,24 @@
 $\color{red}{\textsf{해당 대회의 Train/Test 데이터는 저작권 문제로 공개가 불가능해 설명을 위해 비슷한 이미지로 대체되어있음을 알려드립니다.}}$<br>
 대회에서 실제 활용된 Train/Test에 가까운 데이터는 https://www.content.upstage.ai/ocr-pack/insurance 링크에서 확인해보실 수 있습니다.
 
-### Overview
+### 1-1 Overview
 ![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/4e685524-05b9-4f48-b980-d24460bb43cb)
 해당 대회는 **Upstage AI Lab** 과정에서 비공개로 진행된 내부 대회이며 **다양한 문서를 분류하는 것이 주된 목적**입니다. 하지만 **자동차 계기판, 자동차 번호판** 같은 문서가 아닌 데이터, 그리고 **주민등록증, 여권**과 같은 일반적인 문서와는 조금 이질적인 데이터까지 포함돼 있는 특징이 있습니다. 또한 Train 데이터는 비교적 깨끗한 이미지가 주어지고 **Test 데이터에는 실데이터를 반영해** 다양한 노이즈가 포함된 이미지가 주어졌으며 이에 대응 가능한 모델을 학습시키는 것이 핵심인 대회입니다.
 
-### Environment
+### 1-2 Environment
 Vscode, ssh server(RTX 3090/Ubuntu 20.04.6), pytorch
 
-### Timeline(2 weeks)
+### 1-3 Timeline(2 weeks)
 - February 05, 2024 - Start Date
 - February 19, 2024 - Final submission deadline
 
-### Evaluation
+### 1-4 Evaluation
 ![image](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/96022213/1c2bc659-2d35-4678-9a54-6a6671e002c8)
 평가지표는 macro f1 스코어로 **클래스 불균형**에도 신뢰성있는 점수를 제공하는 평가지표입니다.
 
 ## 2. Components
 
-### Directory
+### 2-1 Directory
 
 ```
 ├── code
@@ -40,7 +40,7 @@ Vscode, ssh server(RTX 3090/Ubuntu 20.04.6), pytorch
 
 ## 3. Data descrption
 
-### Dataset overview
+### 3-1 Dataset overview
 
 이번 대회는 computer vision domain에서 가장 중요한 태스크인 이미지 분류 대회입니다.
 
@@ -55,11 +55,11 @@ Vscode, ssh server(RTX 3090/Ubuntu 20.04.6), pytorch
 
 본 대회는 결과물 csv 확장자 파일을 제출하게 됩니다.
 
-### EDA & Augmentaion
+### 3-2 EDA
 ![스크린샷 2024-02-21 151743](https://github.com/UpstageAILab/upstage-cv-classification-cv5/assets/42354230/1a27b195-36bb-4402-acd1-8a7aa145f0b5)
 
-### Augmentation
-#### Augraphy
+### 3-3 Augmentation
+#### 3-3-1 Augraphy
 <pre>
 ink_phase = [
     InkBleed(intensity_range=(0.3, 0.6),
@@ -116,7 +116,7 @@ pipeline = AugraphyPipeline(ink_phase=ink_phase, paper_phase=paper_phase, post_p
 ![스크린샷 2024-02-22 140000](https://github.com/dudcjs2779/kr-document-type-classification-upstage-competition/assets/42354230/e210c36b-29ec-4611-abb7-f0230eea6e6e)
 
 ------
-#### Albumentation
+#### 3-3-2 Albumentation
 <pre>
 trn_transform = A.Compose([
     A.OneOf([
@@ -163,6 +163,14 @@ trn_transform = A.Compose([
     
 </pre>
 
+### 3-4 TItle Crop
+![05](https://github.com/dudcjs2779/kr-document-type-classification-upstage-competition/assets/42354230/a459c8a4-849c-4b64-b269-216d9b376c24)
+
+**confirmation_of_admission_and_discharge(입퇴원 확인서), medical_outpatient_certificate(통원/진료 확인서), statement_of_opinion(소견서)에 대한 혼동이 있었습니다.** 3가지의 문서의 형식이 매우 유사했고 가장 두드러진 차이를 보였던 문서의 제목부분을 Crop하여 학습해 성능을 높힐 수 있었습니다.
+
+![image](https://github.com/dudcjs2779/kr-document-type-classification-upstage-competition/assets/42354230/c766851c-bb27-422a-ba53-431ee2066372)
+
+**문서의 제목을 크롭**하기 위해 이미지의 윗부분의 중앙을 Crop하여 학습에 사용했습니다. **거의 모든 이미지가 정방향으로 된 Train 셋과 달리 Test 셋은 그렇지 않았고** 때문에 Test 셋의 문서 제목을 Crop하기 위해 **문서 이미지를 정방향으로 회전시키는 모델**을 따로 학습하여 Test 셋의 이미지를 정방향으로 변환한뒤 추론을 진행했습니다. 이미지를 정방향으로 회전시키는 모델을 학습하는데 https://github.com/d4nst/RotNet 링크를 참고하였으며 **code/rotnet_pytorch.ipynb** 에서 코드를 확인하실 수 있습니다.
 
 ## 4. Modeling
 
