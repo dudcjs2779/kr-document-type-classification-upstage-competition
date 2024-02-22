@@ -173,10 +173,12 @@ trn_transform = A.Compose([
 **문서의 제목을 크롭**하기 위해 이미지의 윗부분의 중앙을 Crop하여 학습에 사용했습니다. **거의 모든 이미지가 정방향으로 된 Train 셋과 달리 Test 셋은 그렇지 않았고** 때문에 Test 셋의 문서 제목을 Crop하기 위해 **문서 이미지를 정방향으로 회전시키는 모델**을 따로 학습하여 Test 셋의 이미지를 정방향으로 변환한뒤 추론을 진행했습니다. 이미지를 정방향으로 회전시키는 모델을 학습하는데 https://github.com/d4nst/RotNet 링크를 참고하였으며 **code/rotnet_pytorch.ipynb** 에서 코드를 확인하실 수 있습니다.
 
 ## 4. Modeling
+### Used Model
+
+caformer_s18_384([github](https://github.com/sail-sg/metaformer))
 
 ### Model descrition
 ![197601575-6a19ed8c-7bc2-433b-895b-e5363358ea77](https://github.com/dudcjs2779/kr-document-type-classification-upstage-competition/assets/42354230/82ff7195-2714-4839-83bc-60f3ffed4b29)
-**Used Model:** caformer_s18_384([github](https://github.com/sail-sg/metaformer))
 
 최근에는 Vision Task에서도 **Transforemr 아키텍쳐 기반의 Vision 모델**들이 많이 등장하면서 기존의 Conv 기반의 모델보다 훨씬 좋은 성능을 내고 있고 그에 따라 Vision 모델들도 LLM과 같이 사이즈를 키우는 움직임을 보이며 성능도 비례해서 올라가고 있어 ImageNet Task에서의 상위권을 사이즈가 큰 모델들이 차지하고 있습니다. 하지만 이번 대회에서 제공받은 **GPU의 한계와 2주라는 짧은 시간**으로 인해 사이즈가 큰 모델을 사용하기 힘들다고 판단했고 **MetaFormer 아키텍쳐를 활용한 해당 모델**이 다른 Transformer 기반의 모델에 비해서 **성능도 1~2% 높으며 사이즈도 훨씬 작고 빠르게** 동작한다는 것을 발견했고 해당 모델을 선택하게 되었습니다.
 
