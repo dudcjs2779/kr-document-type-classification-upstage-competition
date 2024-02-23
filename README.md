@@ -221,12 +221,13 @@ F1: 0.9610
 
 F1: 0.9594
 
-### Presentation
-ppt 폴더참조
+### Presentation & Blog
+- ppt 폴더참조  
+- [대회회고](https://longing-artichoke-024.notion.site/Document-Type-Classification-Upstage-Competition-b786c611214d44618eaa663df2066819?pvs=4)
 
 ### Reference
-Focal Loss: https://github.com/mathiaszinnen/focal_loss_torch  
-CAFormer: https://github.com/sail-sg/metaformer  
-RotNet: https://github.com/d4nst/RotNet  
+- Focal Loss: https://github.com/mathiaszinnen/focal_loss_torch  
+- CAFormer: https://github.com/sail-sg/metaformer  
+- RotNet: https://github.com/d4nst/RotNet  
 
 대회 데이터 참고용 링크: https://www.content.upstage.ai/ocr-pack/insurance
